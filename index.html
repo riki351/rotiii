@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bakery - Roti Artisan Sejak 2024</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for elegant typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- AOS (Animate on Scroll) Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Custom styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F5F2; /* A warmer, more elegant cream */
+            color: #292524; /* stone-800 for main text */
+        }
+        body.loading {
+            overflow: hidden;
+        }
+        h1, h2, h3, h4, h5, h6, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+        }
+        #preloader {
+            transition: opacity 1s ease-out;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .dot-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #292524; /* stone-800 */
+            animation: pulse 1.5s infinite cubic-bezier(0.2, 0.6, 0.4, 1);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.5); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+        /* Sticky Header */
+        header.scrolled {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(248, 245, 242, 0.9); /* #F8F5F2 with alpha */
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            animation: slideDown 0.5s ease-out;
+        }
+        header.scrolled nav a, header.scrolled #menu-btn {
+            color: #292524; /* Dark text on scroll */
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        .collection-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 60%);
+            transition: background 0.5s ease;
+        }
+        .collection-card:hover::after {
+             background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%);
+        }
+    </style>
+</head>
+<body class="antialiased loading">
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 bg-[#F8F5F2] z-50 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <img src="https://raw.githubusercontent.com/riki351/rotiii/main/logo%20my%20bakary.png" alt="Logo My Bakery" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover">
+            <p class="text-stone-800 font-serif text-lg tracking-wider mt-4">Roti sedang dipanggang...</p>
+            <div class="flex justify-center items-center space-x-2 mt-4">
+                <div class="dot-pulse"></div>
+                <div class="dot-pulse" style="animation-delay: 0.2s;"></div>
+                <div class="dot-pulse" style="animation-delay: 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="background-music" loop>
+        <source src="https://raw.githubusercontent.com/riki351/rotiii/main/Sal%20Priadi%20-%20Kita%20usahakan%20rumah%20itu%20(Official%20Lyric%20Video).mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <!-- Music Control Button -->
+    <div id="music-control" class="fixed bottom-5 right-5 z-20">
+        <button class="bg-white/80 backdrop-blur-sm text-stone-800 w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform" aria-label="Putar/Hentikan Musik">
+            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="feather feather-play ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="feather feather-pause hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </button>
+    </div>
+
+    <!-- Site Wrapper -->
+    <div id="site-content" class="opacity-0 transition-opacity duration-[1500ms] ease-in">
+
+        <!-- Header & Navigation -->
+        <header id="main-header" class="absolute top-0 left-0 right-0 z-10 transition-all duration-300">
+            <nav class="container mx-auto px-6 py-6 flex justify-between items-center">
+                <!-- Desktop Nav Left -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-white hover:opacity-80 transition-opacity">Cerita Kami</a>
+                    <a href="#collection" class="text-white hover:opacity-80 transition-opacity">Koleksi</a>
+                </div>
+                <!-- Logo -->
+                <div class="absolute left-1/2 -translate-x-1/2">
+                    <a href="#">
+                        <img src="https://raw.githubusercontent.com/riki351/rotiii/main/logo%20my%20bakary.png" alt="Logo My Bakery" class="h-16 md:h-20 rounded-full transition-all duration-300">
+                    </a>
+                </div>
+                 <!-- Mobile logo placeholder -->
+                 <div class="md:hidden">
+                    <a href="#">
+                        <img src="https://raw.githubusercontent.com/riki351/rotiii/main/logo%20my%20bakary.png" alt="Logo My Bakery" class="h-14 rounded-full">
+                    </a>
+                </div>
+                <!-- Desktop Nav Right -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#location" class="text-white hover:opacity-80 transition-opacity">Lokasi</a>
+                    <a href="#contact" class="text-white hover:opacity-80 transition-opacity">Kontak</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="menu-btn" class="text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </button>
+                </div>
+            </nav>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-[#F8F5F2]/95 backdrop-blur-sm text-center">
+                <a href="#about" class="block py-4 text-stone-800 hover:bg-stone-200 transition-colors">Cerita Kami</a>
+                <a href="#collection" class="block py-4 text-stone-800 hover:bg-stone-200 transition-colors">Koleksi</a>
+                <a href="#location" class="block py-4 text-stone-800 hover:bg-stone-200 transition-colors">Lokasi</a>
+                <a href="#contact" class="block py-4 text-stone-800 hover:bg-stone-200 transition-colors">Kontak</a>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-bg h-screen text-white">
+            <div class="h-full bg-black/50 flex flex-col justify-center items-center text-center p-4">
+                <h1 class="text-5xl md:text-7xl font-serif leading-tight mb-4" data-aos="fade-down">Dibuat dengan Hati, Disajikan dengan Cinta</h1>
+                <p class="text-lg max-w-xl" data-aos="fade-up" data-aos-delay="200">Menghadirkan kehangatan roti artisan, dari oven kami ke meja Anda.</p>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 md:py-32">
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                <div class="order-2 md:order-1" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Filosofi Kami</h2>
+                    <p class="text-stone-600 mb-4 leading-relaxed">My Bakery lahir dari keyakinan bahwa roti terbaik berasal dari bahan-bahan paling sederhana dan berkualitas. Kami menggunakan metode tradisional yang diwariskan dari generasi ke generasi, memastikan setiap gigitan adalah perayaan rasa dan tekstur sejati.</p>
+                    <p class="text-stone-600 leading-relaxed">Dari pemilihan tepung hingga proses pemanggangan, setiap langkah kami lakukan dengan penuh dedikasi dan cinta.</p>
+                </div>
+                <div class="order-1 md:order-2" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1568254183919-78a4f43a2b53?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="[Gambar tangan seorang pembuat roti sedang menguleni adonan]" class="rounded-lg w-full h-auto object-cover shadow-xl">
+                </div>
+            </div>
+        </section>
+        
+        <!-- Collection Section -->
+        <section id="collection" class="py-24 md:py-32 bg-stone-100">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-serif text-stone-900">Koleksi Kami</h2>
+                    <p class="text-stone-600 mt-4 max-w-xl mx-auto">Jelajahi pilihan roti dan kue kami yang dibuat segar setiap hari.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Collection Card 1: Roti Artisan -->
+                    <div class="relative rounded-lg overflow-hidden shadow-lg group collection-card" data-aos="fade-up">
+                        <img src="https://images.unsplash.com/photo-1534620808146-d336b36245b5?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="[Gambar berbagai macam roti artisan]" class="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h3 class="text-3xl font-serif transform group-hover:translate-y-[-8px] transition-transform duration-500">Roti Artisan</h3>
+                        </div>
+                    </div>
+                     <!-- Collection Card 2: Viennoiserie -->
+                    <div class="relative rounded-lg overflow-hidden shadow-lg group collection-card" data-aos="fade-up" data-aos-delay="100">
+                        <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="[Gambar croissant yang keemasan dan renyah]" class="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                         <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h3 class="text-3xl font-serif transform group-hover:translate-y-[-8px] transition-transform duration-500">Viennoiserie</h3>
+                        </div>
+                    </div>
+                     <!-- Collection Card 3: Patisserie -->
+                    <div class="relative rounded-lg overflow-hidden shadow-lg group collection-card" data-aos="fade-up" data-aos-delay="200">
+                        <img src="https://images.unsplash.com/photo-1616541823720-72334e56513e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="[Gambar kue-kue kecil yang cantik]" class="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                         <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h3 class="text-3xl font-serif transform group-hover:translate-y-[-8px] transition-transform duration-500">Patisserie</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="py-24 md:py-32">
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                 <div data-aos="fade-up">
+                    <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="[Gambar interior toko roti yang nyaman dengan pencahayaan hangat]" class="rounded-lg w-full h-auto object-cover shadow-xl">
+                </div>
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <h2 class="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Kunjungi Kami</h2>
+                    <p class="text-stone-600 mb-6 leading-relaxed">Rasakan langsung kehangatan dan aroma roti segar dari oven kami. Kami menantikan kehadiran Anda di rumah kami yang nyaman.</p>
+                     <div class="space-y-4 text-stone-700">
+                         <div class="flex items-start space-x-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-500 flex-shrink-0 mt-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <p class="font-semibold">Jl. Kusuma bangsa no 10,<br>jalan sebelum ke rumah ogek</p>
+                         </div>
+                         <div class="flex items-start space-x-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-500 flex-shrink-0 mt-1"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <p><span class="font-semibold">Buka Setiap Hari:</span><br>16:00 - 22:00</p>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer id="contact" class="bg-stone-800 text-stone-200">
+            <div class="container mx-auto px-6 py-20 text-center">
+                <div data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-serif text-white mb-4">Hubungi Kami</h2>
+                    <p class="max-w-xl mx-auto text-stone-300 mb-8">Untuk pesanan khusus, pertanyaan, atau sekadar menyapa.</p>
+                    <a href="mailto:halo@mybakery.com" class="text-2xl font-semibold text-white border-b border-stone-400 hover:border-white transition-colors">halo@mybakery.com</a>
+                    <p class="mt-6 text-stone-300">0831-8465-3480</p>
+
+                    <div class="flex justify-center space-x-6 mt-10">
+                        <a href="https://www.instagram.com/my_bakery17?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="text-stone-300 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                        <a href="#" class="text-stone-300 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                        <a href="#" class="text-stone-300 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+                    </div>
+                </div>
+                 <div class="border-t border-stone-700 mt-16 pt-8 text-center text-stone-400 text-sm">
+                    <p>&copy; 2024 My Bakery. Dirancang dengan Penuh Cinta.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- AOS (Animate on Scroll) Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 50,
+            });
+
+            const preloader = document.getElementById('preloader');
+            const siteContent = document.getElementById('site-content');
+            const body = document.querySelector('body');
+            const audio = document.getElementById('background-music');
+            const musicControlBtn = document.querySelector('#music-control button');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                    body.classList.remove('loading');
+                    
+                    setTimeout(() => {
+                        siteContent.classList.remove('opacity-0');
+                        // Attempt to play music automatically after intro
+                        audio.play().then(() => {
+                            playIcon.classList.add('hidden');
+                            pauseIcon.classList.remove('hidden');
+                        }).catch(error => {
+                            console.log("Autoplay was prevented by browser.");
+                        });
+                    }, 100);
+
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                    }, 1100);
+                }, 1500);
+            });
+
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const header = document.getElementById('main-header');
+            const mainLogo = header.querySelector('a img');
+
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(item => {
+                item.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                    mainLogo.classList.remove('md:h-20');
+                    mainLogo.classList.add('md:h-16');
+                } else {
+                    header.classList.remove('scrolled');
+                    mainLogo.classList.remove('md:h-16');
+                    mainLogo.classList.add('md:h-20');
+                }
+            });
+            
+            // Music Player
+            musicControlBtn.addEventListener('click', async () => {
+                try {
+                    if (audio.paused) {
+                        await audio.play();
+                        playIcon.classList.add('hidden');
+                        pauseIcon.classList.remove('hidden');
+                    } else {
+                        audio.pause();
+                        playIcon.classList.remove('hidden');
+                        pauseIcon.classList.add('hidden');
+                    }
+                } catch (error) {
+                    console.log('Audio playback was interrupted by user action.');
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
+
